@@ -1,1 +1,652 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="day">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#edf3fa">
 
+  <meta
+    name="description"
+    content="School projects I'm proud of — Trv7h's Launge."
+  >
+
+  <title>School Project Showcase | Trv7h's Launge</title>
+  <link rel="icon" type="image/png" href="./logo.png">
+
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #020409;
+      --surface: #070e19;
+      --preview: #0a1728;
+      --cyan: #67e8f9;
+      --text: #e5f5ff;
+      --muted: #a0b6ca;
+      --border: rgba(103, 232, 249, 0.25);
+    }
+
+    html[data-theme="day"] {
+      color-scheme: light;
+      --bg: #edf3fa;
+      --surface: #ffffff;
+      --preview: #e1edf8;
+      --cyan: #075985;
+      --text: #102033;
+      --muted: #40546b;
+      --border: rgba(7, 89, 133, 0.3);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.6;
+    }
+
+    button,
+    a {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    a {
+      color: var(--cyan);
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--cyan);
+      outline-offset: 5px;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    .shell {
+      width: min(1000px, 92%);
+      margin: auto;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding: 22px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .back-link {
+      font: 12px monospace;
+      text-decoration: none;
+      letter-spacing: 1px;
+    }
+
+    button {
+      padding: 10px 16px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    button:hover:not(:disabled) {
+      border-color: var(--cyan);
+      color: var(--cyan);
+    }
+
+    button:disabled {
+      opacity: 0.4;
+      cursor: default;
+    }
+
+    .intro {
+      padding: 38px 0 22px;
+    }
+
+    .eyebrow {
+      color: var(--cyan);
+      font: 11px monospace;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 12px 0;
+      font-size: clamp(30px, 6vw, 52px);
+      line-height: 1.15;
+    }
+
+    .intro p,
+    .project-details p {
+      color: var(--muted);
+    }
+
+    .gallery {
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--surface);
+    }
+
+    /*
+      Keep vertical page scrolling available.
+      Horizontal gestures are handled by the gallery.
+    */
+    .swipe-area {
+      touch-action: pan-y pinch-zoom;
+      cursor: grab;
+    }
+
+    .swipe-area:active {
+      cursor: grabbing;
+    }
+
+    .project-slide {
+      animation: enter-right 0.25s ease-out;
+    }
+
+    .project-slide.from-left {
+      animation-name: enter-left;
+    }
+
+    .project-preview {
+      min-height: 290px;
+      display: grid;
+      place-items: center;
+      padding: 28px;
+      background: var(--preview);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .placeholder-art {
+      width: min(420px, 100%);
+      padding: 38px 20px;
+      border: 1px dashed var(--border);
+      text-align: center;
+      color: var(--cyan);
+    }
+
+    .placeholder-number {
+      display: block;
+      font-size: 60px;
+      font-weight: bold;
+      line-height: 1.2;
+    }
+
+    .placeholder-label {
+      font: 11px monospace;
+      letter-spacing: 2px;
+    }
+
+    .project-image {
+      display: block;
+      max-width: 100%;
+      max-height: 460px;
+      object-fit: contain;
+      user-select: none;
+    }
+
+    .project-details {
+      padding: 28px;
+    }
+
+    h2 {
+      margin: 10px 0 18px;
+      font-size: clamp(24px, 4vw, 34px);
+    }
+
+    h3 {
+      margin: 22px 0 6px;
+      font-size: 16px;
+    }
+
+    .project-details p {
+      margin: 0;
+    }
+
+    .gallery-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 18px;
+      border-top: 1px solid var(--border);
+    }
+
+    .counter {
+      color: var(--cyan);
+      font: 12px monospace;
+      white-space: nowrap;
+    }
+
+    .swipe-hint {
+      margin: 16px 0 36px;
+      color: var(--muted);
+      text-align: center;
+      font: 12px monospace;
+      line-height: 1.7;
+    }
+
+    footer {
+      padding: 22px 0;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font: 11px monospace;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @keyframes enter-right {
+      from {
+        opacity: 0;
+        transform: translateX(-24px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes enter-left {
+      from {
+        opacity: 0;
+        transform: translateX(24px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .project-preview {
+        min-height: 220px;
+        padding: 20px;
+      }
+
+      .project-details {
+        padding: 22px;
+      }
+
+      .gallery-controls {
+        padding: 14px 10px;
+        gap: 8px;
+      }
+
+      .gallery-controls button {
+        padding: 10px;
+        font-size: 12px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="shell">
+    <header>
+      <a class="back-link" href="./index.html">
+        ← BACK TO THE LAUNGE
+      </a>
+
+      <button id="theme-toggle" type="button">
+        Switch to Night
+      </button>
+    </header>
+
+    <main>
+      <section class="intro" aria-labelledby="page-title">
+        <div class="eyebrow">Project / 002</div>
+
+        <h1 id="page-title">School Project Showcase</h1>
+
+        <p>
+          A home for school projects I'm proud of:
+          what I created, what I learned, and the ideas behind my work.
+        </p>
+      </section>
+
+      <section
+        class="gallery"
+        aria-label="School project gallery"
+        aria-roledescription="carousel"
+      >
+        <div
+          class="swipe-area"
+          id="swipe-area"
+          tabindex="0"
+          aria-label="Project viewer"
+          aria-describedby="swipe-hint"
+        >
+          <!-- PROJECT 1: Replace the placeholder content. -->
+          <article
+            class="project-slide"
+            role="group"
+            aria-roledescription="slide"
+            aria-label="1 of 3"
+          >
+            <div class="project-preview">
+              <div class="placeholder-art">
+                <span class="placeholder-number">01</span>
+                <span class="placeholder-label">
+                  YOUR PROJECT IMAGE HERE
+                </span>
+              </div>
+            </div>
+
+            <div class="project-details">
+              <div class="eyebrow">Subject // Add your subject</div>
+              <h2>School Project One</h2>
+
+              <h3>What I created</h3>
+              <p>
+                Replace this with the assignment and what you made.
+              </p>
+
+              <h3>Why I'm proud of it</h3>
+              <p>
+                Explain what makes this project special to you.
+              </p>
+
+              <h3>What I learned</h3>
+              <p>
+                Describe a skill, idea, or challenge you learned from.
+              </p>
+            </div>
+          </article>
+
+          <!-- PROJECT 2: Replace the placeholder content. -->
+          <article
+            class="project-slide"
+            role="group"
+            aria-roledescription="slide"
+            aria-label="2 of 3"
+            hidden
+          >
+            <div class="project-preview">
+              <div class="placeholder-art">
+                <span class="placeholder-number">02</span>
+                <span class="placeholder-label">
+                  YOUR PROJECT IMAGE HERE
+                </span>
+              </div>
+            </div>
+
+            <div class="project-details">
+              <div class="eyebrow">Subject // Add your subject</div>
+              <h2>School Project Two</h2>
+
+              <h3>What I created</h3>
+              <p>
+                Replace this with a description of your second project.
+              </p>
+
+              <h3>Why I'm proud of it</h3>
+              <p>
+                Describe your favorite part or what you accomplished.
+              </p>
+
+              <h3>What I learned</h3>
+              <p>
+                Explain what this project taught you.
+              </p>
+            </div>
+          </article>
+
+          <!-- PROJECT 3: Replace the placeholder content. -->
+          <article
+            class="project-slide"
+            role="group"
+            aria-roledescription="slide"
+            aria-label="3 of 3"
+            hidden
+          >
+            <div class="project-preview">
+              <div class="placeholder-art">
+                <span class="placeholder-number">03</span>
+                <span class="placeholder-label">
+                  YOUR PROJECT IMAGE HERE
+                </span>
+              </div>
+            </div>
+
+            <div class="project-details">
+              <div class="eyebrow">Subject // Add your subject</div>
+              <h2>School Project Three</h2>
+
+              <h3>What I created</h3>
+              <p>
+                Replace this with a description of your third project.
+              </p>
+
+              <h3>Why I'm proud of it</h3>
+              <p>
+                Share what you put into it and why it matters to you.
+              </p>
+
+              <h3>What I learned</h3>
+              <p>
+                Describe something you would carry into a future project.
+              </p>
+            </div>
+          </article>
+        </div>
+
+        <div class="gallery-controls">
+          <button id="previous-project" type="button" disabled>
+            ← Previous
+          </button>
+
+          <span class="counter" id="project-counter">01 / 03</span>
+
+          <button id="next-project" type="button">
+            Next →
+          </button>
+        </div>
+      </section>
+
+      <p class="swipe-hint" id="swipe-hint">
+        Swipe right for the next project →<br>
+        Swipe left to go back, or use the buttons.
+      </p>
+
+      <p
+        class="sr-only"
+        id="gallery-announcement"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+      ></p>
+    </main>
+
+    <footer>
+      © <span id="year"></span> EZIOKWU BAYEM //
+      SCHOOL PROJECT SHOWCASE
+    </footer>
+  </div>
+
+  <script>
+    (() => {
+      const html = document.documentElement;
+      const themeButton = document.getElementById("theme-toggle");
+      const themeColor = document.querySelector(
+        'meta[name="theme-color"]'
+      );
+
+      function updateThemeButton() {
+        const isDay = html.dataset.theme === "day";
+
+        themeButton.textContent = isDay
+          ? "Switch to Night"
+          : "Switch to Day";
+
+        themeColor.content = isDay ? "#edf3fa" : "#020409";
+      }
+
+      themeButton.addEventListener("click", () => {
+        html.dataset.theme =
+          html.dataset.theme === "day" ? "night" : "day";
+
+        updateThemeButton();
+      });
+
+      updateThemeButton();
+
+      document.getElementById("year").textContent =
+        new Date().getFullYear();
+
+      const area = document.getElementById("swipe-area");
+      const slides = [...document.querySelectorAll(".project-slide")];
+      const previous = document.getElementById("previous-project");
+      const next = document.getElementById("next-project");
+      const counter = document.getElementById("project-counter");
+      const announcement = document.getElementById(
+        "gallery-announcement"
+      );
+
+      let current = 0;
+      let gesture = null;
+
+      function showProject(index) {
+        if (
+          index < 0 ||
+          index >= slides.length ||
+          index === current
+        ) {
+          return;
+        }
+
+        const goingBack = index < current;
+        current = index;
+
+        slides.forEach((slide, slideIndex) => {
+          slide.hidden = slideIndex !== current;
+          slide.classList.toggle(
+            "from-left",
+            slideIndex === current && goingBack
+          );
+        });
+
+        counter.textContent =
+          `${String(current + 1).padStart(2, "0")} / ` +
+          String(slides.length).padStart(2, "0");
+
+        previous.disabled = current === 0;
+        next.disabled = current === slides.length - 1;
+
+        const title = slides[current].querySelector("h2").textContent;
+
+        announcement.textContent =
+          `Project ${current + 1} of ${slides.length}: ${title}`;
+      }
+
+      previous.addEventListener("click", () => {
+        showProject(current - 1);
+      });
+
+      next.addEventListener("click", () => {
+        showProject(current + 1);
+      });
+
+      area.addEventListener("keydown", event => {
+        if (event.target !== area) return;
+
+        if (event.key === "ArrowRight") {
+          event.preventDefault();
+          showProject(current + 1);
+        }
+
+        if (event.key === "ArrowLeft") {
+          event.preventDefault();
+          showProject(current - 1);
+        }
+      });
+
+      area.addEventListener("pointerdown", event => {
+        if (!event.isPrimary || event.button !== 0) return;
+
+        if (event.target.closest("a, button, input, textarea")) {
+          return;
+        }
+
+        gesture = {
+          id: event.pointerId,
+          x: event.clientX,
+          y: event.clientY
+        };
+
+        area.setPointerCapture(event.pointerId);
+      });
+
+      area.addEventListener("pointerup", event => {
+        if (!gesture || event.pointerId !== gesture.id) return;
+
+        const distanceX = event.clientX - gesture.x;
+        const distanceY = event.clientY - gesture.y;
+
+        gesture = null;
+
+        if (area.hasPointerCapture(event.pointerId)) {
+          area.releasePointerCapture(event.pointerId);
+        }
+
+        const isHorizontal =
+          Math.abs(distanceX) > Math.abs(distanceY) * 1.3;
+
+        if (Math.abs(distanceX) < 60 || !isHorizontal) return;
+
+        // Your requested direction: swipe RIGHT to go NEXT.
+        if (distanceX > 0) {
+          showProject(current + 1);
+        } else {
+          showProject(current - 1);
+        }
+      });
+
+      area.addEventListener("pointercancel", () => {
+        gesture = null;
+      });
+
+      area.addEventListener("lostpointercapture", () => {
+        gesture = null;
+      });
+
+      area.addEventListener("dragstart", event => {
+        if (event.target.tagName === "IMG") {
+          event.preventDefault();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
